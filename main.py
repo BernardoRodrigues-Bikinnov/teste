@@ -1,10 +1,19 @@
-import win32com.client
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
-excel = win32com.client.Dispatch("Excel.Application")
-excel.Visible = False
-wb = excel.Workbooks.Open(r"full_path_to_your_file.xlsx")
-ws = wb.Worksheets("Certificado")  # Sheet you want to print
+app = FastAPI()
 
-ws.ExportAsFixedFormat(0, r"full_output_path.pdf")  # 0 = PDF format
-wb.Close(False)
-excel.Quit()
+@app.post("/webhook")
+async def handle_webhook(request: Request):
+    try:
+        payload = await request.json()
+        print("Received webhook payload:", payload)
+
+        # ✅ Do something with the payload here
+        # e.g., store in DB, trigger internal process, etc.
+
+        return JSONResponse(content={"message": "Webhook received!"}, status_code=200)
+
+    except Exception as e:
+        print("Error processing webhook:", str(e))
+        return JSONResponse(content={"error": "Failed to process webhook"}, status_code=400)
