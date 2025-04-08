@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 import json
-from .parser import parse_elementor_request
+from app.parser import parse_elementor_request  # ✅ absolute import
 
 app = FastAPI()
 
