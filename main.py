@@ -4,18 +4,19 @@ import json
 
 app = FastAPI()
 
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-import json
-
-app = FastAPI()
-
 DEBUG = True
 
 
 @app.get("/")
 async def root():
     return {"status": "Webhook server is running!"}
+
+
+def clean_field_name(raw_key):
+    # Remove "fields[" and "]" from Elementor field keys
+    if raw_key.startswith("fields[") and raw_key.endswith("]"):
+        return raw_key[len("fields["):-1]
+    return raw_key
 
 
 @app.post("/webhook")
@@ -51,8 +52,11 @@ async def handle_webhook(request: Request):
             # Fallback: handle form data dynamically
             form_data = await request.form()
             print("\n📥 Form data received:")
-            for key, value in form_data.items():
-                print(f"- {key}: {value}")
+            cleaned_data = {}
+            for raw_key, value in form_data.items():
+                clean_key = clean_field_name(raw_key)
+                cleaned_data[clean_key] = value
+                print(f"- {clean_key}: {value}")
 
         return JSONResponse(content={"message": "Webhook received successfully"}, status_code=200)
 
