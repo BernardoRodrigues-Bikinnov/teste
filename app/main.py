@@ -36,8 +36,6 @@ async def handle_webhook(request: Request):
             status_code=200
         )
 
-        print("ola")
-
     except Exception as e:
         print(f"❌ Error processing webhook: {str(e)}")
         return JSONResponse(content={"error": "Failed to process webhook"}, status_code=400)
